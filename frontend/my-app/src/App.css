@@ -1,0 +1,95 @@
+.App {
+  text-align: center;
+  background-color: rgb(70, 66, 66);
+  overflow-anchor: none;
+}
+
+
+.container-wrap{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tooltip { 
+  display: none;
+  z-index: 10;
+  background-color: var(--background-color2);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  top: -15px;
+  right: 10px;
+  margin-left: -60px; 
+}
+
+.container:hover > div.tooltip.hoverable, div.tooltip.hovered   { 
+  display: block; 
+}
+
+.container-wrap--align-right > *{
+  margin-right: 0.4rem;
+  text-align: right ;
+  flex-basis: 100%;
+}
+
+.font0-9rem{
+  font-size: 0.9rem;
+}
+
+
+:root{
+  --light-theme: #f5f5f5;
+  --light-theme2: #ffffff;
+  --black-theme-color: #e7ebe8;
+  --black-theme: #444649;
+  --black-theme2: #3b3737;
+  --light-theme-color: #1f1c1c;
+  --light-theme-hovered: #dce4e4;
+  --black-theme-hovered: #3e3f3f;
+}
+
+body {
+  height: 100%;
+  --background-color: var(--light-theme);
+  --background-color2: var(--light-theme2);
+  --text-color: var(--light-theme-color);
+  --theme-hovered: var(--light-theme-hovered);
+ 
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: var(1s);
+}
+
+body.dark {
+  --background-color: var(--black-theme);
+  --background-color2: var(--black-theme2);
+  --text-color: var(--black-theme-color);
+  --theme-hovered: var(--black-theme-hovered);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+
+
+
+
+
