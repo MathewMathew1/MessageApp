@@ -48,9 +48,11 @@ const TextArea = ({clickedDescendantOfToolbar, showBBCodeEditor, setMessage, mes
     const sendMessage = (): void => {
         if(message==="") return
         const { signal } = channelInfo.controller
+        
         const body = {
             message: message,
         }
+        setMessage("")
   
         fetch(urlOfPostMessage+channelInfo.channelId,{
             method: "POST",
@@ -82,47 +84,6 @@ const TextArea = ({clickedDescendantOfToolbar, showBBCodeEditor, setMessage, mes
 
     const closeEmojiPicker = (e: any): void => {
         if (e.key=== 'Escape' && !e.shiftKey) setShowEmojiPicker(false)
-    }
-
-    const convertMessageToHtml = (message: string): string => {
-        let messageText: string =  message
-        
-        let BBCodeRegExMap: any = {
-            'bold': {
-                regExpression: /\[b](.*?)\[&#x2F;b]/g, 
-                replacement:  "<strong>$1</strong>",
-            },
-            'italic': {
-                regExpression: /\[i](.*?)\[&#x2F;i]/g, 
-                replacement:  "<em>$1</em>",
-            },
-            'CrossedOut': {
-                regExpression: /\[s](.*?)\[&#x2F;s]/g, 
-                replacement:  "<span style='text-decoration: line-through'>$1</span>",
-            },
-            'image': {
-                regExpression: /(https?:\&#x2F;\&#x2F;.*\.(?:png|jpg))/g,
-                replacement: `<img style='max-height: 400px' src=$&></img>`,
-            },
-            'link': {
-                regExpression: /(?:(?:(^|\s)https?|ftp|file):\&#x2F;\&#x2F;|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\&#x2F;%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\&#x2F;%=~_|$])/igm,
-                replacement: `<a style='text-decoration: none; color: rgb(64, 165, 193)' href=$&>$&</a>`
-            },
-        
-            'new line': {
-                regExpression: /\n+/g,
-                replacement: `<br />`
-            }
-
-        };
-        
-        for (let i in BBCodeRegExMap) {
-            messageText = messageText.replace(BBCodeRegExMap[i]["regExpression"],BBCodeRegExMap[i]["replacement"])
-
-
-        }
-
-        return messageText
     }
 
     return (

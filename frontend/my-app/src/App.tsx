@@ -1,9 +1,7 @@
 import './App.css';
 // mui imports
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import { AlertColor } from '@mui/material';
-import { Switch, Route} from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 // component imports
 import Navbar from './components/MainPage/NavBar';
 import Authorization from './components/Login/Authorization';
@@ -19,7 +17,6 @@ import { useState, useEffect } from 'react';
 import Sidebar from './components/User/Sidebar';
 import Box from '@material-ui/core/Box';
 import AboutSite from './components/MainPage/AboutSite';
-import { withRouter } from 'react-router-dom';
 
 export const SNACKBAR_MESSAGES = {
   "Sign up success": { text:"Sign up successfully", severity: "success" as AlertColor},
@@ -29,7 +26,9 @@ export const SNACKBAR_MESSAGES = {
 }
 
 
+
 function App() {
+  
 
   const [showModal, setShowModal] = useState(false)
   const [currentModalOpenIsLogin, setCurrentModalOpenIsLogin] = useState(false)
@@ -43,7 +42,7 @@ function App() {
   useEffect(() => {
     let themeMode: string|null = localStorage.getItem("theme mode")
     if(themeMode === "dark" || themeMode === null ) document.body.classList.toggle('dark')
-        
+  
   }, []);
 
   return (
@@ -56,18 +55,22 @@ function App() {
           <div>
             <Box sx={{ display: 'flex',  height: "100vh" }}>
               <Sidebar/>            
-              <Switch>
-                <PrivateRoute path="/channel" component={ChatRoom} />
-
-                <Route exact path="/" render={(props) => (
+              <Routes>
+                <Route path="/" element={
                     <>
                       <FriendBar></FriendBar>
                       <AboutSite></AboutSite>
                     </>
-                  )}
+                  }
                 />
-                <PrivateRoute  path="/profile" component={Profile} />
-              </Switch>
+               
+                <Route path="/channel" element={<PrivateRoute/>}>
+                  <Route path="/channel" element={<ChatRoom/>}/>
+                </Route>
+                <Route path="/profile" element={<PrivateRoute/>}>
+                  <Route path="/profile" element={<Profile/>}/>
+                </Route>
+              </Routes>
             </Box>          
           </div>
           <SnackBars></SnackBars>
@@ -78,4 +81,4 @@ function App() {
   );
 }
 
-export default withRouter(App);
+export default App;

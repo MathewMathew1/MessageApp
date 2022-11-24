@@ -14,17 +14,9 @@ type passwordErrorType = {
     newPasswordError2: string 
 }
 
-const NameChannelInput: SxProps = {
-    marginTop: "0.8rem",
-    width: "80%",
-    backgroundColor: "var(--background-color2) !important",
-    color: "var(--text-color) !important",
-    ' > *': {
-      color: "var(--text-color) !important",
-    }
-  }
 
-  const inputStyle: SxProps = {
+
+const inputStyle: SxProps = {
     backgroundColor: "var(--background-color2) !important",
     '> *': {
        
@@ -105,6 +97,7 @@ const ChangePasswordModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolea
         return () => {
             controller.abort()     
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return(

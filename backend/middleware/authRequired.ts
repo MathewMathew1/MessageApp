@@ -1,8 +1,7 @@
 
 import { Response, NextFunction } from 'express';
-import AuthenticationDAO from '../dao/authenticationDAO';
+import AuthenticationDAO from '../Dao/AuthenticationDao';
 import { IGetUserAuthInfoRequest} from '../types/types';
-
 
 const authRequired = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
     const authHeader: string | undefined = req.headers["authorization"]

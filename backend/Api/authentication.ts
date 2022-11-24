@@ -1,9 +1,8 @@
-import AuthenticationDAO from "../dao/authenticationDAO"
+import AuthenticationDAO from "../Dao/AuthenticationDao"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { Request, Response, NextFunction } from 'express';
 import { IGetUserAuthInfoRequest } from '../types/types';
-
 import { validationResult } from 'express-validator'
 
 export default class AuthenticationCtrl {

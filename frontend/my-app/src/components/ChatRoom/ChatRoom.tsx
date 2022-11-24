@@ -12,6 +12,8 @@ import ChatRoomUserList from "./ChatRoomUserList"
 //TYPES
 import { UserInChannel, ChannelInfo } from '../../types/types'
 import { SxProps } from '@mui/system'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useUpdateSnackbar } from '../../SnackBarContext'
 
 const ChatRoomStyle: SxProps = {
     display: "flex",
@@ -36,11 +38,17 @@ export function useChannel(){
 }
 
 let controller = new AbortController()
-const ChatRoom = (props: any): JSX.Element => {   
+const ChatRoom = (): JSX.Element => {   
     const userInChannelList = useArray<UserInChannel>([])
     const [channelInfo, setChannelInfo] = useState<ChannelInfo>()
     const [channelId, setChannelId] = useState<string|null>(null)
     const [userChannelInfo, setUserChannelInfo] = useState<UserInChannel|undefined>()
+
+    // eslint-disable-next-line
+    const [searchParams, _setSearchParams] = useSearchParams();
+
+    const navigate = useNavigate()
+    const updateSnackbar = useUpdateSnackbar()
     const user = useUser()
     const userUpdate = useUserUpdate()
     controller = new AbortController()
@@ -54,11 +62,11 @@ const ChatRoom = (props: any): JSX.Element => {
             if(differentChannelThanCurrent){
                 userIsInDifferentChannel = true
                 redirectUrl = "/channel?channelId="+user.userChannels[i].id  
-                props.history.push(redirectUrl)
+                navigate(redirectUrl)
                 break
             }
         }
-        if(!userIsInDifferentChannel) window.history.replaceState(null, "Oliphant", "/")
+        if(!userIsInDifferentChannel) navigate("/")
     }
 
     useEffect(() => {
@@ -82,30 +90,30 @@ const ChatRoom = (props: any): JSX.Element => {
         user.socket.on('user-removed', ({userId}:{userId: number}) => {
             userInChannelList.removeByKey("id", userId.toString())
             if(userId.toString() === user.userInfo?.id){
+                updateSnackbar.addSnackBar({snackbarText: `You have been removed from ${channelInfo?.name}.`, severity: "error"})
                 if(channelId!==null) userUpdate.removeChannel(parseInt(channelId))
                 changeUrl()
             }
         })
+        user.socket.on('user-allowance-changed', ({userId, userInviteAbility}:{userId: number, userInviteAbility: boolean}) => {
+            userInChannelList.updateObjectByKey("id", userId.toString(), [{field: "can_invite", fieldValue: userInviteAbility}])
+            if(userId.toString() === user.userInfo?.id && userChannelInfo!==undefined){
+                setUserChannelInfo({...userChannelInfo, can_invite: userInviteAbility})
+            }
 
+        })
+        
         return () => {
             if(user.socket !== undefined) {
                 user.socket.off('user-joined-channel')
                 user.socket.off('user-left-channel')
                 user.socket.off('channel_and_room_deleted')
                 user.socket.off('user-removed')
+                user.socket.off('user-allowance-changed')
             }
          }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.socket, userInChannelList, user.userInfo, user.userChannels, channelId]);
-
-    const parseParams = (params = "") => {
-        const rawParams = params.replace("?", "").split("&")
-        const extractedParams: {[key: string]: string} = {}
-        rawParams.forEach((item) => {
-          let modifiedItem: string[] = item.split("=")
-          extractedParams[modifiedItem[0]] = modifiedItem[1]
-        });
-        return extractedParams;
-    }
 
     useEffect(() => {
         if(user.socket!==undefined) user.socket.emit("join-chatroom", channelId)
@@ -113,8 +121,7 @@ const ChatRoom = (props: any): JSX.Element => {
     }, [user.socket, channelId]);
 
     useEffect(() => {
-        let filter: {[key: string]: string} = parseParams(props.location.search)
-        let id: string =  filter["channelId"] as string || "1"
+        let id = searchParams.get("channelId")
 
         const didUserLeftRoom = channelId!==null && id!==channelId
         if(didUserLeftRoom && user.socket!==undefined ) user.socket.emit("leave-chatroom", channelId)
@@ -136,7 +143,7 @@ const ChatRoom = (props: any): JSX.Element => {
             .then(response => {                     
                 if("error" in response) {
                     let redirectUrl = user.userChannels[0] !== undefined ? "/channel?channelId="+user.userChannels[0].id : "/"
-                    props.history.push(redirectUrl)
+                    navigate(redirectUrl)
                     return
                 }
                 userInChannelList.set(response.channelMembers)
@@ -144,20 +151,21 @@ const ChatRoom = (props: any): JSX.Element => {
                
             })
             .catch(error=>{console.log(error)})
-
-         
-    }, [props.location.search]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [searchParams.get("channelId")]);
     
     useEffect(() => {
         if(userInChannelList.array.length!==0)
             setUserChannelInfo(userInChannelList.array.find((userM:UserInChannel)=>userM.id===user.userInfo?.id))
-    }, [user.userInfo?.id, userInChannelList.array, setUserChannelInfo])
+        // eslint-disable-next-line react-hooks/exhaustive-deps    
+    }, [user.userInfo?.id, userInChannelList.array])
 
     useEffect(() => {
         return () => {
             controller.abort()
             userUpdate.setCurrentlyObservedChannel(null)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

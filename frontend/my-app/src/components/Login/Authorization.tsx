@@ -9,10 +9,10 @@ import { ModalStyle } from '../ChatRoom/Modals/ModalStyle';
 import { useState, useReducer, useEffect } from 'react';
 import { urlOfLogin, urlOfSignUp } from '../../apiRoutes';
 //COMPONENTS
-import { SNACKBAR_MESSAGES } from '../../App';
 //TYPES
 import { SxProps } from '@mui/system';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import { useUpdateSnackbar } from '../../SnackBarContext';
 
 
 const inputStyle: SxProps = {
@@ -33,6 +33,9 @@ const WrapperStyle: CSSProperties = {
     gap: "0.5rem"
 }
 
+const marginTop: CSSProperties = {
+    marginTop: "0.5rem"
+}
 
 const IconStyle: CSSProperties = {
     display: "flex",
@@ -98,7 +101,8 @@ const Authorization = ({showModal, setShowModal, setIsLoginModalOpen, isLoginMod
     const [username, setUsername] = useState("")
 
     const [formErrors, dispatchFormErrors] = useReducer(formErrorsReducer, {passwordError: "", usernameError: "", passwordError2: "" })
-
+    
+    const updateSnackbar = useUpdateSnackbar()
     
     const authorizeUser = (): void =>{
         cleanErrors()
@@ -153,9 +157,10 @@ const Authorization = ({showModal, setShowModal, setIsLoginModalOpen, isLoginMod
             .then(response => {            
 
                 if(!response.error){
+                    setPassword("")
+                    setUsername("")
                     setIsLoginModalOpen(true)
-                    const snackBarInfo = {message: "Sign up successfully", severity: "success"}
-                    sessionStorage.setItem("snackbar", JSON.stringify(snackBarInfo))
+                    updateSnackbar.addSnackBar({snackbarText: "Sign up successfully", severity:"success"})
                     return
                 }
                 if(response.error.includes("Username")){
@@ -231,24 +236,6 @@ const Authorization = ({showModal, setShowModal, setIsLoginModalOpen, isLoginMod
         cleanErrors()
     }
 
-    const changeModalText = () => {
-        if(isLoginModalOpen){
-            return(
-                <div className='font0-9rem'>if you dont have account sign up 
-                    <Link onClick={() => openDifferentModal()}>
-                        {' here'}
-                    </Link>  
-                </div>
-            )
-        }
-        return(
-            <div className='font0-9rem'>if you already have account login 
-                <Link onClick={() => openDifferentModal()}>
-                    {' here'}
-                </Link>  
-            </div>
-        )
-    }
 
     useEffect(() => {
         return () => {
@@ -304,8 +291,20 @@ const Authorization = ({showModal, setShowModal, setIsLoginModalOpen, isLoginMod
                             <div >
                                 <Button onClick={() => authorizeUser()}  variant="contained" endIcon={<LoginIcon />}>{isLoginModalOpen? "Login": "SignUp"}</Button>
                             </div>
-                            <div className='font0-9rem'> 
-                                {changeModalText()}
+                            <div style={marginTop} className='font0-9rem'> 
+                                {isLoginModalOpen?
+                                    <div className='font0-9rem'>if you dont have account sign up&nbsp;
+                                        <Link onClick={() => openDifferentModal()}>
+                                            {'here'}
+                                        </Link>  
+                                    </div>
+                                :
+                                    <div className='font0-9rem'>if you already have account login&nbsp;
+                                        <Link onClick={() => openDifferentModal()}>
+                                            {'here'}
+                                        </Link>  
+                                    </div>
+                                }
                             </div>
                         </div>
                 

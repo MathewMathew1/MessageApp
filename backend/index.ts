@@ -1,37 +1,36 @@
 import express from 'express'
 import { Pool } from 'pg'
-import pg from "pg"
 import router from './Api/route'
-import AuthenticationDAO from './dao/authenticationDAO'
-import MessageDAO from './Dao/messageDao'
-import ChannelDAO from './Dao/channelsDao'
-import InviteDAO from './Dao/inviteDao'
-import EmojiReactionDAO from './Dao/emojiReactionDao'
+import AuthenticationDAO from './Dao/AuthenticationDao'
+import MessageDAO from './Dao/MessageDao'
+import ChannelDAO from './Dao/ChannelsDao'
+import InviteDAO from './Dao/InviteDao'
+import EmojiReactionDAO from './Dao/EmojiReactionDao'
 import bodyParser from 'body-parser'
 import { Server } from "socket.io";
-
 import cors from "cors"
 import dotenv from "dotenv"
 import { instrument } from "@socket.io/admin-ui"
-import friendInviteListener from './Listeners/FriendInviteListeners'
-import FriendDao from './Dao/friendsDao'
-import FriendCtrl from './Api/friend'
-import FriendInviteCtrl from './Api/friendInvite'
-import FriendInviteDao from './Dao/friendsInvitesDao'
+import FriendDao from './Dao/FriendsDao'
+import FriendInviteDao from './Dao/FriendsInvitesDao'
 import { FriendUser } from './types/types'
 
 const app = express()
-const PORT = 8000
+const PORT = process.env.PORT || 8000 
 app.use(express.json())
 app.use(bodyParser.json())
-app.use(cors({origin: ["http://localhost:3000","https://socket.io"]}))
+let env = process.env.NODE_ENV || 'development';
+if(env==='development'){
+  app.use(cors({origin: ["http://localhost:3000","https://socket.io"]}))
+}
+else{
+  app.use(cors({origin: ["https://socket.io", "https://oliphant.netlify.app"]}))
+}
 
 dotenv.config()
 
 app.use("/api/v1/", router)
 app.use("*", (_req, res) => res.status(404).json({error: "Not found"}))
-
-
 
 
 const server = app.listen(PORT, () => {
@@ -41,7 +40,7 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000","https://admin.socket.io"]
+    origin: env==='development'? ["http://localhost:3000","https://admin.socket.io"]:  ["https://oliphant.netlify.app","https://admin.socket.io"]
   }
 })
 
@@ -83,7 +82,6 @@ io.use(async function(socket, next){
   .on("connection", (socket: any) => {
     socket.on("join-chatroom", (room: string) => {
       if(isNaN(parseInt(room))){
-        console.log("error Lies there")
         return 
       }
       const joinRoom = async () => {
@@ -97,15 +95,12 @@ io.use(async function(socket, next){
       
     })
 
-
-    socket.on("leave-chatroom", (room: string) => {
-      
+    socket.on("leave-chatroom", (room: string) => { 
       const leaveRoom = async () => {
         socket.leave(room)
       }
 
       leaveRoom()
-    
     })
   
     socket.on("disconnect", (reason: any) => {
@@ -140,19 +135,21 @@ io.use(async function(socket, next){
   });
 });
 
+const host = env==='development'? 'localhost': "containers-us-west-114.railway.app"
+const port = env==='development'? 5432: 7122
+const database = env==='development'? "MessageApp" : "railway"
+
 const connection = {
   user: process.env.POSTGRESQL_USER, 
-  database: process.env.POSTGRESQL_DATABASE, 
+  database: database, 
   password: process.env.POSTGRESQL_PASSWORD, 
-  host: 'localhost', 
-  port: 5432, 
+  host: host, 
+  port: port, 
   max: 10, // max number of clients in the pool
   idleTimeoutMillis: 30000,
 }
 
-
 const dbConnection = new Pool(connection)
-
 
 AuthenticationDAO.injectDB(dbConnection)
 MessageDAO.injectDB(dbConnection)

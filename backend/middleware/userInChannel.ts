@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import ChannelDAO from '../Dao/channelsDao';
+import ChannelDAO from '../Dao/ChannelsDao';
 import { IGetUserAuthInfoRequest } from '../types/types';
 
 

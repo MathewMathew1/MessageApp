@@ -1,4 +1,4 @@
-import MessageDao from "../Dao/messageDao";
+import MessageDao from "../Dao/MessageDao";
 import { Response, NextFunction } from 'express';
 import { IGetUserAuthInfoRequest } from '../types/types';
 import { validationResult } from 'express-validator'
@@ -141,6 +141,7 @@ export default class MessageCtrl {
             res.status(500).json({ error: "Something went wrong try again" })
           }
     }
+    
 
 
 }

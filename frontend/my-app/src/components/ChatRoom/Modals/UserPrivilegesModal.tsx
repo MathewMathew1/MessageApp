@@ -1,15 +1,12 @@
 import { Modal, Box, List, ListItem, Checkbox, ListItemIcon, ButtonGroup, Button, Grid, Alert } from "@mui/material"
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import LoginIcon from '@mui/icons-material/Login'
 //HELPERS
 import { useEffect, useState } from "react"
-
 import { ModalStyle, AlignRight } from "./ModalStyle"
-import { ulrOfChangingUserPrivileges } from "../../../apiRoutes"
+import { ulrOfChangingUserPrivileges, urlOfRemovingUser } from "../../../apiRoutes"
 import { useChannel } from "../ChatRoom"
 import { useUpdateSnackbar } from "../../../SnackBarContext"
 //COMPONENTS
-import ConfirmModal from "./ConfirmModal";
 //TYPES
 import { UserInChannel } from "../../../types/types"
 
@@ -24,7 +21,7 @@ const UserPrivilegesModal = ({isModalOpen, setIsModalOpen, userInfo}: {isModalOp
     
     const updateSnackbar = useUpdateSnackbar()
     const channel = useChannel()
-
+    console.log(userInfo)
     const controller = new AbortController()
 
     const changingUserPrivileges = (): void => {
@@ -59,6 +56,29 @@ const UserPrivilegesModal = ({isModalOpen, setIsModalOpen, userInfo}: {isModalOp
             })
             .catch(error=>{console.log(error)})
     }   
+
+    const kickUser = (): void => {
+        const { signal } = controller
+        
+        fetch(urlOfRemovingUser+channel.channelId+`?userId=${userInfo.id}`,{
+            method: "DELETE",
+            signal,
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': "Bearer " + localStorage.getItem("token") || ""
+            }})
+            .then(response => response.json())
+            .then(response => {         
+                if(!("error" in response)) {
+                    
+                    updateSnackbar.addSnackBar({snackbarText: "Kicked user successfully", severity: "success"})
+                    setIsModalOpen(false)
+                    return
+                }
+                updateSnackbar.addSnackBar({snackbarText: "Unable to kick user", severity: "error"})
+            })
+            .catch(error=>{console.log(error)})
+    }   
     
     useEffect(() => {
         setError(null)
@@ -87,7 +107,7 @@ const UserPrivilegesModal = ({isModalOpen, setIsModalOpen, userInfo}: {isModalOp
                         </ListItemIcon>
                     </ListItem>
                    <ListItem>
-                        <Button variant="contained" color="error" endIcon={<PersonRemoveIcon/>}>Kick </Button>
+                        <Button onClick={()=>kickUser()} variant="contained" color="error" endIcon={<PersonRemoveIcon/>}>Kick </Button>
                    </ListItem>
                 </List>
                 

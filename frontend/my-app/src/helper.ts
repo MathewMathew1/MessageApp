@@ -29,12 +29,14 @@ const stringAvatar = (name: string) => {
   
 
   const displayDates = (date: string): string =>{
-    const currentDate: Date = new Date();
     const selectedDate: Date = new Date(date)
 
-    const diffTime = Math.abs(currentDate.getTime() - selectedDate.getTime());
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+    let startOfDay = new Date();
+    startOfDay.setHours(0,0,0,0); 
+
+    const diffTime = Math.abs(startOfDay.getTime() - selectedDate.getTime())
+    const diffDays = startOfDay <= selectedDate? 0:  Math.ceil((diffTime) / (1000 * 60 * 60 * 24))
+
     let dateToReturn = '';
 
     let minutes: string = selectedDate.getMinutes()<10? `0${selectedDate.getMinutes()}`:selectedDate.getMinutes().toString()
@@ -48,6 +50,7 @@ const stringAvatar = (name: string) => {
     else {
       dateToReturn = `${selectedDate.getDate()}/${selectedDate.getMonth()+1}/${selectedDate.getFullYear()}`
     }
+
     return dateToReturn
 }  
 

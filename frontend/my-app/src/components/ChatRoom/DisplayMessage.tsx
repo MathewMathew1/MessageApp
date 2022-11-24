@@ -95,21 +95,22 @@ const DisplayMessage = ({ index, style, data }: {index: number, style: any, data
         if (node) {
             let height = node.clientHeight
                 
-            if(a) return
             data.setRowHeight(index,  height);
         }
     }
     
     useLayoutEffect( () => {
-        console.log()
-        if(message.id===data.messageEditedId) changeHeight({a: false})
 
+        changeHeight({a: false})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.messageEditedId, data.messageEdited, data.listOfAllMessages.length]);
+
+
 
     useLayoutEffect( () => {
         changeHeight({})
-
-    }, [node?.clientHeight,newMessageBadge.current.clientHeight]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [node?.clientHeight,newMessageBadge.current.clientHeight, message.emojis]);
     
     let margin = {
         marginTop: extraMargin
@@ -134,10 +135,12 @@ const DisplayMessage = ({ index, style, data }: {index: number, style: any, data
                 replacement:  "<span style='text-decoration: line-through'>$1</span>",
             },
             'image': {
+                // eslint-disable-next-line
                 regExpression: /(https?:\&#x2F;\&#x2F;.*\.(?:png|jpg))/g,
                 replacement: `<img style='max-height: 350px; display: block; width: 100%' src=$&></img>`,
             },
             'link': {
+                // eslint-disable-next-line
                 regExpression: /(?:(?:(^|\s)https?|ftp|file):\&#x2F;\&#x2F;|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\&#x2F;%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\&#x2F;%=~_|$])/igm,
                 replacement: `<a style='text-decoration: none; color: rgb(64, 165, 193)' href=$&>$&</a>`
             },
@@ -163,16 +166,6 @@ const DisplayMessage = ({ index, style, data }: {index: number, style: any, data
             e.preventDefault()
             editMessage()
         }
-    }
-
-    const emojiReactionShown = (keyName: EmojiReaction, message: Message, i: number): JSX.Element =>{
-        const didCurrentUserReactedWithEmoji: boolean =  message.emojis[keyName].some(e => e.userId.toString() === user.userInfo?.id)
-       
-        return(
-            <ListItemText onClick={()=>sendEmojiReaction(didCurrentUserReactedWithEmoji? "DELETE": "POST", message.id, keyName)} key={`EmojiReaction${i}`} sx={EmojiBox} >
-                {keyName} {message.emojis[keyName].length}
-            </ListItemText>
-        )
     }
 
     const editMessage = (): void => {
@@ -204,7 +197,6 @@ const DisplayMessage = ({ index, style, data }: {index: number, style: any, data
         data.showBBCodeEditor("Edited-Message-Area")
     }
 
-    console.log(data.lastSeenMessageId.frontend === message.id)
     return(
         <Grid style={style}>
             <Grid sx={{padding: 0}} ref={handleRect}>
@@ -266,11 +258,16 @@ const DisplayMessage = ({ index, style, data }: {index: number, style: any, data
                                 }
                             </Grid>
                             <Grid item xs={12}>
-                                {Object.keys(message.emojis).map((keyName: any, i: number) => (
-                                    <span key={`emoji${i}`}>
-                                        {emojiReactionShown(keyName, message, i)}
-                                    </span>
-                                ))}
+                                {Object.keys(message.emojis).map((keyName: any, i: number) => {                                      
+                                    const didCurrentUserReactedWithEmoji: boolean =  message.emojis[keyName].some(e => e.userId.toString() === user.userInfo?.id)
+                                    return(
+                                        <span key={`emoji${i}`}>
+                                            <ListItemText onClick={()=>sendEmojiReaction(didCurrentUserReactedWithEmoji? "DELETE": "POST", message.id, keyName)} key={`EmojiReaction${i}`} sx={EmojiBox} >
+                                                {keyName} {message.emojis[keyName].length}
+                                            </ListItemText>
+                                        </span>
+                                    )                 
+                                })}
                             </Grid>    
                         </Grid>
                         {(isHoverBarVisible || data.messageHoveredId===message.id) && data.messageEditedId!==message.id? <HoverToolBar sendEmojiReaction={sendEmojiReaction} message={message} 

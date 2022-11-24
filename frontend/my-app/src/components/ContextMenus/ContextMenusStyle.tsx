@@ -15,5 +15,14 @@ const WarningLabelStyle: SxProps = {
     }
 }
 
+const SuccessLabelStyle: SxProps = {
+  color: "rgb(118, 227, 147)",
+  '&:hover': {
+    backgroundColor: "green",
+    color: "white"
+  }
+}
 
-export{MenuStyle, WarningLabelStyle}
+
+
+export{MenuStyle, WarningLabelStyle, SuccessLabelStyle}

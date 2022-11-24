@@ -72,7 +72,7 @@ const MessageBox = (): JSX.Element => {
     const [textAreaModified, setTextAreaModified] = useState<HTMLElement|null>(null)
     const [contextMenu, setContextMenu] = useState<MenuPosition>(null)
     const[userInContextMenu, setUserInContextMenu] = useState<UserInContextMenu|undefined>()
-
+   
     const user = useUser()
     const channelInfo = useChannel()
 
@@ -96,21 +96,18 @@ const MessageBox = (): JSX.Element => {
         if(dynamicList && areMessageFetched) {
             dynamicList.scrollToItem(listOfAllMessages.array.length, "end")
         }
-        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dynamicList, areMessageFetched])
 
     useEffect(() => {
         if(dynamicList && isScrolledToTheBottom){
             dynamicList.scrollToItem(listOfAllMessages.array.length, "end")
         }
-        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listOfAllMessages.array.length])
 
     useEffect(() => {
-        console.log(!areMessageFetched || channelInfo.userChannelInfo?.last_message_seen_id === undefined)
-        console.log(channelInfo.userChannelInfo)
         if(!areMessageFetched || channelInfo.userChannelInfo?.last_message_seen_id === undefined) return
-        console.log(listOfAllMessages.array.length)
         if(listOfAllMessages.array.length === 0) return
 
         if(channelInfo.userChannelInfo?.last_message_seen_id === null){
@@ -119,14 +116,16 @@ const MessageBox = (): JSX.Element => {
         }
 
         const result = listOfAllMessages.array.find(element => {
-            if(channelInfo.userChannelInfo?.last_message_seen_id===null || channelInfo.userChannelInfo?.last_message_seen_id===undefined)  return
-            return parseInt(element.id) > channelInfo.userChannelInfo?.last_message_seen_id
+            const isLastMessageSeenByUserUnDefined = channelInfo.userChannelInfo?.last_message_seen_id===null || channelInfo.userChannelInfo?.last_message_seen_id===undefined
+            if(isLastMessageSeenByUserUnDefined)  return false
+            return parseInt(element.id) > channelInfo.userChannelInfo?.last_message_seen_id!
+            
+            
         })
-        console.log({result})
-        console.log()
+
         const didUserSeenAllMessages = result 
         if(didUserSeenAllMessages) setLastSeenMessageId({frontend: result?.id, backend: result?.id})
-        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [channelInfo.userChannelInfo?.last_message_seen_id, areMessageFetched])
 
     useEffect(() => {
@@ -192,6 +191,7 @@ const MessageBox = (): JSX.Element => {
                 user.socket.off('delete-emoji')
             }
          }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.socket, listOfAllMessages, channelInfo.channelId])
 
     useEffect(() => {
@@ -255,7 +255,7 @@ const MessageBox = (): JSX.Element => {
         }
         if(channelInfo.channelId !== null) fetchMessages()
         
-        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [channelInfo.channelId])
 
     useEffect((): void => {
@@ -265,10 +265,10 @@ const MessageBox = (): JSX.Element => {
         textarea.focus()
         textarea.setSelectionRange(textModifiedByToolbarInfo.position[0], textModifiedByToolbarInfo.position[1])
         setTextModifiedByToolbarInfo({...textModifiedByToolbarInfo, changeSelectionForUser: false})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [message, messageEdited])
 
     const getRowHeight = (index: number): number => {
-        console.log(rowHeights.current)
         return rowHeights.current[index] -3 || 82;
     }
     

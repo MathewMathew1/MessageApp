@@ -135,6 +135,7 @@ const UserProvider = ({ children }: {children: React.ReactNode}): JSX.Element =>
            socket.off('disconnect')
            socket.off('connect')
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket, userFriends, userFriendInvites, userInvites])
    
 
@@ -271,6 +272,7 @@ const UserProvider = ({ children }: {children: React.ReactNode}): JSX.Element =>
             if(socket !==undefined) socket.disconnect()
             controller.abort()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const removeInvite = (idOfInvite: string): void => {

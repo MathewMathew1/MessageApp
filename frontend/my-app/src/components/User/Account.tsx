@@ -14,9 +14,6 @@ import { Link } from 'react-router-dom';
 //COMPONENTS
 import AvatarComponent from './Avatar';
 
-
-
-
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,

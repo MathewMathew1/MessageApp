@@ -43,6 +43,7 @@ const HoverToolBar = ({message, setDeleteMessageModalInfo, sendEmojiReaction, me
         return () => {
             setMessageHoveredId(null)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const openEmojiPicker = () => {

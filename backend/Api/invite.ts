@@ -1,5 +1,5 @@
-import InviteDao from "../Dao/inviteDao";
-import ChannelDAO from "../Dao/channelsDao";
+import InviteDao from "../Dao/InviteDao";
+import ChannelDAO from "../Dao/ChannelsDao";
 import { Response, NextFunction } from 'express';
 import { IGetUserAuthInfoRequest } from '../types/types';
 import { io } from "..";

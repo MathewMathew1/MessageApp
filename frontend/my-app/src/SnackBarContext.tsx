@@ -39,6 +39,7 @@ const SnackbarProvider = ({ children }: {children: any}): JSX.Element => {
             let snackbarInfoParsed: SnackbarInfo = JSON.parse(snackbarInfo)
             addSnackBar({snackbarText: snackbarInfoParsed.message, severity: snackbarInfoParsed.severity})
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const addSnackBar = ({snackbarText, severity}: {snackbarText: string, severity: AlertColor}): void => {

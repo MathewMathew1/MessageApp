@@ -1,5 +1,4 @@
 import { AppBar, Box, Toolbar, Typography, Button,IconButton, Badge } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu';
 import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 //HELPERS

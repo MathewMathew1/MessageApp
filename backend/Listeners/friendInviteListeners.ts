@@ -1,9 +1,7 @@
 
 let connection: any
 
-export default class friendInviteListener {
-    
-    
+export default class friendInviteListener {  
     static async injectDB(conn: any) {
         if(connection) {
             return

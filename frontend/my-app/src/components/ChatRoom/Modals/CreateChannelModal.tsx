@@ -16,6 +16,8 @@ const NameChannelInput: SxProps = {
     }
   }
 
+const MINIMAL_CHANNEL_LENGTH = 3
+const TOO_SHORT_NAME = `Name of channel is too short, at least ${MINIMAL_CHANNEL_LENGTH} characters required`
 
 const CreateChannelModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolean, setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element => {
@@ -24,9 +26,16 @@ const CreateChannelModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolean
     const updateSnackbar = useUpdateSnackbar()
     const userUpdate = useUserUpdate()
     const controller = new AbortController()
+    const [error, setError] = useState<string|null>(null)
 
     const createChannel = (): void => {
-      
+        if(channelName.length < MINIMAL_CHANNEL_LENGTH) {
+            setError(TOO_SHORT_NAME)
+            return
+        }
+
+        setError(null)
+        
         const body = {
             "channelName": channelName
         }
@@ -42,13 +51,15 @@ const CreateChannelModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolean
             }})
             .then(response => response.json())
             .then(response => {
+                console.log(response)
                 if(!response.error){
+                    
                     userUpdate.addChannel(response.channel)
                     updateSnackbar.addSnackBar({snackbarText: "Channel created successfully", severity: "success"})
                     setIsModalOpen(false)
                     return
                 }
-                updateSnackbar.addSnackBar({snackbarText: response.error, severity: "error"})
+                updateSnackbar.addSnackBar({snackbarText: "Unable to create channel", severity: "error"})
             })
             .catch(error=>{console.log(error)})
     }
@@ -58,6 +69,7 @@ const CreateChannelModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolean
             
             controller.abort()     
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return(
@@ -69,7 +81,7 @@ const CreateChannelModal = ({isModalOpen, setIsModalOpen}: {isModalOpen: boolean
         >
             <Box sx={ModalStyle} >
                 Channel Name
-                <TextField sx={NameChannelInput} placeholder="Lotr Fan Club" value={channelName} onChange={(e)=> setChannelName(e.target.value)}></TextField>
+                <TextField id="outlined-error" error={error!==null} helperText={error} sx={NameChannelInput} placeholder="Lotr Fan Club" value={channelName} onChange={(e)=> setChannelName(e.target.value)}></TextField>
                 <Grid sx={AlignRight}>
                     <ButtonGroup variant="contained" aria-label="outlined primary button group">
                         

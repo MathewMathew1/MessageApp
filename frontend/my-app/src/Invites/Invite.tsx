@@ -65,7 +65,7 @@ const Invite = ({invite, keyId}: {invite: UserInvites, keyId: number}): JSX.Elem
         return () => {
             controller.abort()
         }    
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const respondToInvite = (method: string): void => {

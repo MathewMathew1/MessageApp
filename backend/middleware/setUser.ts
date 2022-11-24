@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import AuthenticationDAO from '../dao/authenticationDAO';
+import { Response, NextFunction } from 'express';
+import AuthenticationDAO from '../Dao/AuthenticationDao';
 import { IGetUserAuthInfoRequest } from '../types/types';
 
 const setUserMiddleware = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {

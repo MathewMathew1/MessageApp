@@ -2,14 +2,10 @@ import { Button, ButtonGroup, TableHead, TableRow, TableBody, TableCell, Table, 
 //types
 import { UserInvites } from '../../types/types';
 import { SxProps } from '@mui/system';
-import { useUser } from '../../UserContext';
 import { useUpdateSnackbar } from '../../SnackBarContext';
 import { urlOfInvitesSent, urlOfRespondingToInvite } from '../../apiRoutes';
 import useArray from '../../customHooks/useArray';
 import { useEffect } from 'react';
-
-
-
 
 const TableStyle: SxProps = {
     backgroundColor: "var(--background-color2)",
@@ -93,6 +89,7 @@ const TableInvites = (): JSX.Element => {
         return () => {
             controller.abort()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

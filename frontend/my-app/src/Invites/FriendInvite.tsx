@@ -66,7 +66,7 @@ const FriendInvite = ({invite, keyId}: {invite: FriendInvites, keyId: number}): 
         return () => {
             controller.abort()
         }    
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const respondToInvite = (method: string): void => {
@@ -84,7 +84,8 @@ const FriendInvite = ({invite, keyId}: {invite: FriendInvites, keyId: number}): 
                 updateSnackbar.addSnackBar({severity: "warning", snackbarText: response.error})
                 return
             }
-            updateSnackbar.addSnackBar({severity: "success", snackbarText: "Invite accepted"})
+            if(method==="DELETE") updateSnackbar.addSnackBar({severity: "success", snackbarText: "Invite declined"})
+            else updateSnackbar.addSnackBar({severity: "success", snackbarText: "Invite accepted"})
             userUpdate.removeFriendInvite(invite.id)
         })
         .catch(error=>{console.log(error)})

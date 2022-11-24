@@ -1,15 +1,15 @@
 import express from "express"
-import authRequired from "../middleware/AuthRequired"
+import authRequired from "../middleware/authRequired"
 import userInChannel from "../middleware/userInChannel"
-import AuthenticationCtrl from "./authentication"
-import MessageCtrl from "./message"
-import InviteCtrl from "./invite"
-import ChannelCtrl from "./channel"
-import EmojiReactionCtrl from "./emojiReaction"
+import userInChannelOfMessages from "../middleware/userInChannelOfMessage"
+import AuthenticationCtrl from "./Authentication"
+import MessageCtrl from "./Message"
+import InviteCtrl from "./Invite"
+import ChannelCtrl from "./Channel"
+import EmojiReactionCtrl from "./EmojiReaction"
 import { check } from 'express-validator'
-import FriendCtrl from "./friend"
-import FriendInviteCtrl from "./friendInvite"
-
+import FriendCtrl from "./Friend"
+import FriendInviteCtrl from "./FriendInvite"
 
 const router = express.Router()
 
@@ -71,8 +71,8 @@ router.route("/user/friends").get(authRequired, FriendCtrl.apiGetUserFriendships
 router.route("/user/friend-invites").get(authRequired, FriendInviteCtrl.apiGetUserInvites)
 router.route("/user/friend-invites-sent").get(authRequired, FriendInviteCtrl.apiGetInvitesSentByUser)
 //EMOJI
-router.route("/emoji/message/id/:id").post(authRequired, EmojiReactionCtrl.apiAddEmojiReactionToMessage)
-router.route("/emoji/message/id/:id").delete(authRequired, EmojiReactionCtrl.apiRemoveEmoji)
+router.route("/emoji/message/id/:id").post(authRequired, userInChannelOfMessages, EmojiReactionCtrl.apiAddEmojiReactionToMessage)
+router.route("/emoji/message/id/:id").delete(authRequired, userInChannelOfMessages, EmojiReactionCtrl.apiRemoveEmoji)
 //FRIENDINVITES
 router.route("/friend-invite").post(authRequired, inviteSanitize, FriendInviteCtrl.apiSendInvite)
 router.route("/friend-invite/id/:id").patch(authRequired, FriendInviteCtrl.apiAcceptInvite).delete(authRequired, FriendInviteCtrl.apiDeleteInvite)

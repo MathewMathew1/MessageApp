@@ -33,6 +33,7 @@ const DeleteMessageModal = ({isModalOpen, setIsModalOpen, idOfDeletedMessage, co
         return () => {
             controller.abort()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return(

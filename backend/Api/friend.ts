@@ -1,9 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { FriendUser, IGetUserAuthInfoRequest } from '../types/types';
 import { io } from "..";
-import FriendDao from "../Dao/friendsDao";
-
-
+import FriendDao from "../Dao/FriendsDao";
 
 export default class FriendCtrl {
     

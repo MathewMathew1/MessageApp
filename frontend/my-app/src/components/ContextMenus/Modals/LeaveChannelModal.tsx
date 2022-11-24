@@ -1,7 +1,6 @@
-import {Modal, Box, ButtonGroup, Button, Grid, TextField} from "@mui/material"
+import {Modal, Box, ButtonGroup, Button, Grid} from "@mui/material"
 import { ModalStyle, AlignRight } from "../../ChatRoom/Modals/ModalStyle" 
 //HELPERS
-import { SxProps } from "@mui/system"
 
 const LeaveChannelModal = ({isModalOpen, setIsModalOpen, callBackFunction, channelName}: {
     isModalOpen: boolean, 

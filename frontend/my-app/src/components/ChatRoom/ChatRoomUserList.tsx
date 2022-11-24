@@ -17,9 +17,6 @@ import { useUpdateSnackbar } from "../../SnackBarContext";
 import { SxProps } from "@mui/system";
 import { UserInContextMenu } from "../../types/types";
 
-
-
-
 const UsernameDisplay: SxProps = {
   flex: "none",
   marginLeft: "1rem",
@@ -68,7 +65,7 @@ const ChatRoomUserList = (): JSX.Element => {
    
   const [invitedId, setInvitedId] = useState("")
   const [contextMenu, setContextMenu] = useState<MenuPosition>(null)
-  const[userInContextMenu, setUserInContextMenu] = useState<UserInContextMenu|undefined>()
+  const [userInContextMenu, setUserInContextMenu] = useState<UserInContextMenu|undefined>()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [userInfoToModal, setUserInfoToModal] = useState<UserInChannel>()
   const [inviteError, setInviteError] = useState<string|null>(null)
@@ -136,30 +133,8 @@ const ChatRoomUserList = (): JSX.Element => {
       )
     })
     setOptionsForInvitedUser(optionsForAutoComplete)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.userFriends.length, channelInfo.channelInfo?.id]);
-
-  const userListItem = (user: UserInChannel, index: number): JSX.Element => {
-    
-    const canCurrentLoggedUserEditPrivilegesThisUser: boolean = channelInfo.userChannelInfo?.is_owner_of_channel === true 
-      && user.id!==currentLoggedUser.userInfo?.id
-    
-    return(
-      <ListItem onContextMenu={(e)=>handleContextMenu(e, index)} sx={ListItemStyle} key={index}>
-        <AvatarComponent name={user.username}></AvatarComponent>
-        <ListItemText sx={UsernameDisplay}primary={user.username}/>
-        {user.is_owner_of_channel? (<Tooltip title="Server owner" placement="top"><StarIcon sx={{ color: "yellow" }}></StarIcon></Tooltip>):null}
-        {canCurrentLoggedUserEditPrivilegesThisUser?
-        
-          <Tooltip title="Edit User privileges" placement="top">
-            <IconButton onClick={()=>{setUserInfoToModal(user); setIsModalOpen(true)}}>
-              <EditIcon  sx={{ color: "grey !important" }}></EditIcon>
-            </IconButton>
-          </Tooltip>
-          :null
-        }
-      </ListItem>
-    )
-  }
   
   const sendInvite = (): void => {
     const { signal } = channelInfo.controller
@@ -177,7 +152,6 @@ const ChatRoomUserList = (): JSX.Element => {
       }})
       .then(response => response.json())
       .then(response => { 
-          console.log(response)
           if("error" in response){
             setInviteError(response.error)
             
@@ -198,7 +172,8 @@ const ChatRoomUserList = (): JSX.Element => {
   useEffect(() => {
     setInvitedId("")
   }, [channelInfo.channelId]);
-
+  
+  const canInvite = channelInfo.userChannelInfo?.can_invite || channelInfo.userChannelInfo?.is_owner_of_channel
   return (
     <Box sx={BoxStyle}>
       <Grid container >
@@ -207,14 +182,33 @@ const ChatRoomUserList = (): JSX.Element => {
               {channelInfo? <span> Users in {channelInfo.channelInfo?.name}:</span>: null}
             </Typography>
               <List sx={UsersBoxStyle} >
-              {channelInfo.userList.map((user: UserInChannel, index: number) => (
-                  userListItem(user, index)
-              ))}
-          
+              {channelInfo.userList.map((user: UserInChannel, index: number) => {
+                 
+    
+                    const canCurrentLoggedUserEditPrivilegesThisUser: boolean = channelInfo.userChannelInfo?.is_owner_of_channel === true 
+                      && user.id!==currentLoggedUser.userInfo?.id
+                    
+                    return(
+                      <ListItem onContextMenu={(e)=>handleContextMenu(e, index)} sx={ListItemStyle} key={index}>
+                        <AvatarComponent name={user.username}></AvatarComponent>
+                        <ListItemText sx={UsernameDisplay}primary={user.username}/>
+                        {user.is_owner_of_channel? (<Tooltip title="Server owner" placement="top"><StarIcon sx={{ color: "yellow" }}></StarIcon></Tooltip>):null}
+                        {canCurrentLoggedUserEditPrivilegesThisUser?
+                        
+                          <Tooltip title="Edit User privileges" placement="top">
+                            <IconButton onClick={()=>{console.log(user); setUserInfoToModal(user); setIsModalOpen(true)}}>
+                              <EditIcon  sx={{ color: "grey !important" }}></EditIcon>
+                            </IconButton>
+                          </Tooltip>
+                          :null
+                        }
+                      </ListItem>
+                    )            
+                  })}  
               </List>
           </Grid>
         </Grid> 
-        {channelInfo.userChannelInfo?.can_invite || channelInfo.userChannelInfo?.is_owner_of_channel? 
+        { canInvite? 
           <>
           {inviteError!==null? <Alert severity="error">{inviteError}</Alert>: null}
           
@@ -247,9 +241,9 @@ const ChatRoomUserList = (): JSX.Element => {
               )}
             />
           </>
-          :null
+          :<></>
         }
-        {userInfoToModal? 
+        { userInfoToModal!==undefined?
           <UserPrivilegesModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} userInfo={userInfoToModal}></UserPrivilegesModal>
           :null
         }

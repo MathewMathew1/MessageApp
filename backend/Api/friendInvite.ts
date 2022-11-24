@@ -1,10 +1,9 @@
 import { Response, NextFunction } from 'express';
 import { FriendInvites, FriendShip, IGetUserAuthInfoRequest } from '../types/types';
 import { io } from "..";
-import FriendDao from "../Dao/friendsDao";
-import FriendInviteDao from "../Dao/friendsInvitesDao";
+import FriendDao from "../Dao/FriendsDao";
+import FriendInviteDao from "../Dao/FriendsInvitesDao";
 import { validationResult } from 'express-validator';
-
 
 export default class FriendInviteCtrl {
     

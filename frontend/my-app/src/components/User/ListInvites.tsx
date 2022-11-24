@@ -2,7 +2,6 @@ import { IconButton, ListItem, ListItemText, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 //HELPERS
 import { FriendInvites } from '../../types/types';
-import { useUser } from '../../UserContext';
 import useArray from '../../customHooks/useArray';
 import { useEffect } from 'react';
 import { useUpdateSnackbar } from '../../SnackBarContext';
@@ -10,26 +9,6 @@ import { urlOfFriendInvitesSend,  urlOfRespondingToFriendInvite } from '../../ap
 import { displayDates } from '../../helper';
 //types
 import { SxProps } from '@mui/system';
-
-
-const TableStyle: SxProps = {
-    backgroundColor: "var(--background-color2)",
-    padding: "1rem",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "0rem",
-    ' > *': {
-        color: "var(--text-color) !important",
-        marginTop: "0.5rem"
-    }
-}
-
-
-const tableListItemStyle: SxProps = {
-    ' > *': {
-        color: "var(--text-color) !important",
-    }
-}
 
 const listItemStyle: SxProps = {
     borderStyle: "solid",
@@ -92,6 +71,7 @@ const ListFriendInvites = (): JSX.Element => {
         return () => {
             controller.abort()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
